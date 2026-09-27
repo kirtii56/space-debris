@@ -1,0 +1,55 @@
+# docker compose up --build
+#   1. starts PostgreSQL
+#   2. runs the pipeline once (download real data, screen the ISS, cluster debris)
+#   3. starts the API on :8000 and the dashboard on :8501
+
+x-app: &app
+  build: .
+  environment:
+    DATABASE_URL: postgresql+psycopg://debris:debris@db:5432/debris
+    DATA_DIR: /app/data
+  volumes:
+    - appdata:/app/data
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: debris
+      POSTGRES_PASSWORD: debris
+      POSTGRES_DB: debris
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U debris"]
+      interval: 5s
+      retries: 10
+
+  pipeline:
+    <<: *app
+    command: ["python", "-m", "debris.cli", "all"]
+    depends_on:
+      db:
+        condition: service_healthy
+
+  api:
+    <<: *app
+    command: ["uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "8000"]
+    ports:
+      - "8000:8000"
+    depends_on:
+      pipeline:
+        condition: service_completed_successfully
+
+  dashboard:
+    <<: *app
+    command: ["streamlit", "run", "dashboard/app.py", "--server.port", "8501", "--server.address", "0.0.0.0"]
+    ports:
+      - "8501:8501"
+    depends_on:
+      pipeline:
+        condition: service_completed_successfully
+
+volumes:
+  pgdata:
+  appdata:
