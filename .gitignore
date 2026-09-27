@@ -1,0 +1,17 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+*.egg-info/
+
+# Local data (downloaded TLEs, SQLite database, model metrics)
+data/*
+!data/.gitkeep
+
+# Environment and editors
+.env
+.vscode/
+.idea/
+.DS_Store
