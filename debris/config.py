@@ -21,6 +21,12 @@ CELESTRAK_GROUPS = [
     "active",
 ]
 DEBRIS_GROUPS = [g for g in CELESTRAK_GROUPS if g.endswith("-debris")]
+EVENT_NAMES = {
+    "fengyun-1c-debris": "Fengyun-1C (2007 ASAT test)",
+    "cosmos-2251-debris": "Cosmos 2251 (2009 collision)",
+    "iridium-33-debris": "Iridium 33 (2009 collision)",
+    "cosmos-1408-debris": "Cosmos 1408 (2021 ASAT test)",
+}
 
 # CelesTrak asks users not to re-download the same group more than once every 2 hours.
 CACHE_HOURS = float(os.getenv("CACHE_HOURS", "2"))

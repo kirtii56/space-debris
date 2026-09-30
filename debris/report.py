@@ -17,7 +17,7 @@ import pandas as pd
 
 from . import db
 from .collision import risk_level
-from .config import ROOT_DIR
+from .config import EVENT_NAMES, ROOT_DIR
 from .ml.clustering import load_metrics
 
 logger = logging.getLogger(__name__)
@@ -27,12 +27,6 @@ README = ROOT_DIR / "README.md"
 START, END = "<!-- RESULTS:START -->", "<!-- RESULTS:END -->"
 
 DEBRIS_COLOR, PAYLOAD_COLOR, NOISE_COLOR = "#D98E04", "#2E6F9E", "#B8B8B8"
-EVENT_NAMES = {
-    "fengyun-1c-debris": "Fengyun-1C (2007 ASAT test)",
-    "cosmos-2251-debris": "Cosmos 2251 (2009 collision)",
-    "iridium-33-debris": "Iridium 33 (2009 collision)",
-    "cosmos-1408-debris": "Cosmos 1408 (2021 ASAT test)",
-}
 
 
 def _style(ax, title, xlabel, ylabel):

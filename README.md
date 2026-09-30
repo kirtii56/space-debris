@@ -89,6 +89,20 @@ python -m debris.cli screen --primary 25544     # any NORAD ID; --hours, --thres
 python -m debris.cli cluster                    # --eps, --min-samples
 ```
 
+## Dashboard
+
+`streamlit run dashboard/app.py` opens five interactive pages:
+
+| Page | What you can do |
+|---|---|
+| Overview | Rotate and zoom a 3D Earth showing every tracked object, filter by object type and orbit regime; positions update every minute |
+| Satellite explorer | Search any object by name or NORAD ID to see its 3D orbit, ground track (map or globe), live altitude and speed, and other objects from the same launch |
+| Orbits in motion | Press play to watch hundreds of objects move over the next hours, in 3D or on a map |
+| Close approaches | Click an event on the timeline to replay the flyby in the ISS's radial / in-track / cross-track frame, with distance over time |
+| Debris clusters | Change DBSCAN's features, `eps` and `min_samples` and watch the clusters, scores and event-vs-cluster heatmap update live |
+
+On first start with an empty database the dashboard downloads live data by itself, so it can be deployed as is on Streamlit Community Cloud.
+
 ## API
 
 | Endpoint | Returns |
@@ -131,10 +145,11 @@ debris/
   collision.py       collision probability estimate
   ml/clustering.py   DBSCAN breakup clustering and evaluation
   db.py              database helpers (plain SQL)
+  report.py          results snapshot (charts, tables, README section)
   cli.py             command line
 sql/schema.sql       tables, indexes and analytics views
 api/main.py          FastAPI app
-dashboard/app.py     Streamlit dashboard
+dashboard/app.py     Streamlit dashboard (pages in dashboard/views/)
 tests/               pytest suite (synthetic TLEs built with sgp4's exporter)
 ```
 

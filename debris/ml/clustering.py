@@ -24,29 +24,38 @@ from ..config import DATA_DIR, DEBRIS_GROUPS
 logger = logging.getLogger(__name__)
 
 FEATURES = ["inclination_deg", "mean_motion_rev_day", "eccentricity"]
+# Extra orbital elements the dashboard lets you try as features.
+EXTRA_COLUMNS = ["raan_deg", "arg_perigee_deg", "perigee_km", "apogee_km"]
 METRICS_FILE = DATA_DIR / "cluster_metrics.json"
 
 
 def load_debris() -> pd.DataFrame:
     placeholders = ", ".join(f"'{g}'" for g in DEBRIS_GROUPS)
     return db.query_df(
-        f"SELECT norad_id, name, source_group, {', '.join(FEATURES)} FROM objects "
+        f"SELECT norad_id, name, source_group, {', '.join(FEATURES + EXTRA_COLUMNS)} "
+        f"FROM objects "
         f"WHERE object_type = 'DEBRIS' AND source_group IN ({placeholders})"
     )
 
 
-def suggest_eps(X: np.ndarray, min_samples: int) -> float:
-    """k-distance 'elbow': sort each point's distance to its k-th neighbour and take the
-    point furthest from the straight line joining the first and last values."""
+def k_distances(X: np.ndarray, min_samples: int) -> np.ndarray:
+    """Each point's distance to its k-th nearest neighbour, sorted (the 'k-distance plot')."""
     distances, _ = NearestNeighbors(n_neighbors=min_samples).fit(X).kneighbors(X)
-    k_dist = np.sort(distances[:, -1])
+    return np.sort(distances[:, -1])
+
+
+def suggest_eps(X: np.ndarray, min_samples: int) -> float:
+    """k-distance 'elbow': the point furthest below the straight line joining the first
+    and last k-distances."""
+    k_dist = k_distances(X, min_samples)
     x = np.arange(len(k_dist))
     line = k_dist[0] + (k_dist[-1] - k_dist[0]) * x / max(len(k_dist) - 1, 1)
     return float(k_dist[int(np.argmax(line - k_dist))])
 
 
-def cluster(df: pd.DataFrame, eps: float | None = None, min_samples: int = 10):
-    X = StandardScaler().fit_transform(df[FEATURES])
+def cluster(df: pd.DataFrame, eps: float | None = None, min_samples: int = 10,
+            features: list[str] | None = None):
+    X = StandardScaler().fit_transform(df[features or FEATURES])
     eps = eps or suggest_eps(X, min_samples)
     labels = DBSCAN(eps=eps, min_samples=min_samples).fit_predict(X)
 
@@ -64,7 +73,10 @@ def cluster(df: pd.DataFrame, eps: float | None = None, min_samples: int = 10):
         "adjusted_rand_index": round(float(adjusted_rand_score(true, labels)), 4),
     }
     if len(set(labels[clustered])) > 1:
-        metrics["silhouette"] = round(float(silhouette_score(X[clustered], labels[clustered])), 4)
+        # Silhouette is O(n^2), so score a fixed random sample of up to 3,000 points.
+        n = int(clustered.sum())
+        metrics["silhouette"] = round(float(silhouette_score(
+            X[clustered], labels[clustered], sample_size=min(n, 3000), random_state=0)), 4)
     return labels, metrics
 
 
