@@ -1,0 +1,55 @@
+name: refresh real data
+
+# Downloads live CelesTrak data, runs the full analysis and commits the results
+# (charts, CSV, JSON and the Results section of the README).
+on:
+  workflow_dispatch:          # "Run workflow" button on the Actions tab
+  schedule:
+    - cron: "30 3 * * 1"      # every Monday 03:30 UTC
+  push:
+    branches: [main]
+    paths:
+      - "debris/**"
+      - "sql/**"
+      - "requirements.txt"
+      - ".github/workflows/refresh-data.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: refresh-data
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+
+      - name: Download data, screen the ISS, cluster debris
+        run: python -m debris.cli all
+
+      - name: Write results
+        run: python -m debris.report
+
+      - name: Commit results
+        env:
+          GIT_AUTHOR_NAME: Kirti
+          GIT_AUTHOR_EMAIL: ""
+          GIT_COMMITTER_NAME: Kirti
+          GIT_COMMITTER_EMAIL: ""
+        run: |
+          git add results README.md
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+          else
+            git -c user.useConfigOnly=false commit -m "Update results with latest CelesTrak data"
+            git pull --rebase origin main
+            git push
+          fi

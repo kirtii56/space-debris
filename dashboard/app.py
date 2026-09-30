@@ -34,16 +34,32 @@ def styled(fig):
     return fig
 
 
-try:
-    objects = load("SELECT * FROM objects")
-except Exception:
-    objects = pd.DataFrame()
+def load_objects() -> pd.DataFrame:
+    try:
+        return load("SELECT * FROM objects")
+    except Exception:
+        return pd.DataFrame()
+
 
 st.title("Space debris tracker")
+objects = load_objects()
 if objects.empty:
-    st.warning("The database is empty. Load real data first with `python -m debris.cli all`, "
-               "then refresh this page.")
-    st.stop()
+    # First start (for example on Streamlit Community Cloud): fetch live data automatically.
+    from debris import conjunctions, pipeline
+    from debris.ml import clustering
+
+    try:
+        with st.spinner("Downloading live data from CelesTrak and running the analysis. "
+                        "This takes about a minute on first start."):
+            pipeline.run()
+            conjunctions.run()
+            clustering.run()
+    except Exception as exc:
+        st.error(f"Could not load live data ({exc}) Check the internet connection, or run "
+                 "`python -m debris.cli all` in a terminal, then refresh this page.")
+        st.stop()
+    load.clear()
+    objects = load_objects()
 
 objects["epoch"] = pd.to_datetime(objects["epoch"])
 st.caption(f"{len(objects):,} objects from CelesTrak · newest TLE "

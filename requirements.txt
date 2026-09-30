@@ -20,6 +20,7 @@ uvicorn[standard]>=0.29
 # Dashboard
 streamlit>=1.50
 plotly>=5.20
+matplotlib>=3.8
 
 # Tests
 pytest>=8.0

@@ -28,6 +28,12 @@ flowchart LR
     D --> H[Streamlit dashboard]
 ```
 
+## Results
+
+<!-- RESULTS:START -->
+Results from live CelesTrak data appear here after the first automatic run.
+<!-- RESULTS:END -->
+
 ## Tech stack
 
 | Area | Tools |
@@ -64,6 +70,15 @@ pip install -r requirements.txt
 python -m debris.cli all           # download data, screen the ISS, cluster debris
 streamlit run dashboard/app.py     # dashboard
 uvicorn api.main:app --reload      # API (separate terminal)
+```
+
+### Refresh the results
+
+The **refresh real data** GitHub Actions workflow downloads live CelesTrak data every Monday, runs the full analysis and commits the charts and tables in `results/` plus the Results section above. It can also be started any time from the Actions tab (**Run workflow**). To make the same snapshot locally:
+
+```bash
+python -m debris.cli all
+python -m debris.report
 ```
 
 ### Command line
