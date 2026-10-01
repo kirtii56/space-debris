@@ -71,3 +71,19 @@ def test_clicked_reads_point_without_customdata():
                      go.Scatter(x=[1, 2, 3], y=[1, 2, 3], customdata=[[10], [11], [12]])])
     assert c.clicked(Event, fig)[0] == 12
     assert c.clicked(None, fig) is None
+
+
+def test_app_survives_code_update_while_running(analysed):
+    """Simulates a deploy: a module changes on disk between two runs of the same app."""
+    import os
+    import time
+
+    from dashboard import common as c
+
+    at = AppTest.from_file(f"{ROOT}/dashboard/app.py", default_timeout=120).run()
+    assert not at.exception
+    stale = __import__("sys").modules["dashboard.common"]
+    stale.PAGES = None                            # pretend the loaded copy is an old version
+    os.utime(c.__file__, (time.time() + 5, time.time() + 5))   # file on disk is "newer"
+    at.run()
+    assert not at.exception, at.exception

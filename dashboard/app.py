@@ -3,10 +3,31 @@
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))  # make the project importable
+ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT))  # make the project importable
 
 import streamlit as st  # noqa: E402
 
+
+def reload_if_code_changed() -> None:
+    """Keep all project modules on the same version after an update.
+
+    When new code is pulled while the app is running (Streamlit Cloud does this on every
+    push), Streamlit re-runs this file but can keep old copies of the modules it imports,
+    mixing two versions. If any project file changed since the last run, drop them all so
+    they are imported fresh, and clear cached results built by the old code.
+    """
+    files = [*ROOT.glob("debris/**/*.py"), *ROOT.glob("dashboard/**/*.py")]
+    fingerprint = max((f.stat().st_mtime for f in files), default=0)
+    previous = getattr(sys, "_space_debris_code_version", None)
+    if previous is not None and fingerprint != previous:
+        for name in [m for m in sys.modules if m.split(".")[0] in ("debris", "dashboard")]:
+            del sys.modules[name]
+        st.cache_data.clear()
+    sys._space_debris_code_version = fingerprint
+
+
+reload_if_code_changed()
 st.set_page_config(page_title="Space Debris Tracker", page_icon="🛰️", layout="wide")
 
 from dashboard import common  # noqa: E402
