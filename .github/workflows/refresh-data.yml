@@ -1,11 +1,13 @@
 name: refresh real data
 
-# Downloads live CelesTrak data, runs the full analysis and commits the results
-# (charts, CSV, JSON and the Results section of the README).
+# Every day: download live CelesTrak data and publish it as a snapshot file on the
+# "data-snapshot" release (the dashboard uses it when a host can't reach CelesTrak).
+# Every Monday, on code changes, or on demand: also run the full analysis and commit the
+# results (charts, CSV, JSON and the Results section of the README).
 on:
   workflow_dispatch:          # "Run workflow" button on the Actions tab
   schedule:
-    - cron: "30 3 * * 1"      # every Monday 03:30 UTC
+    - cron: "30 3 * * *"      # daily 03:30 UTC
   push:
     branches: [main]
     paths:
@@ -24,6 +26,8 @@ concurrency:
 jobs:
   refresh:
     runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -35,10 +39,28 @@ jobs:
       - name: Download data, screen the ISS, cluster debris
         run: python -m debris.cli all
 
+      - name: Publish the data snapshot
+        run: |
+          grep -q '"source": "CelesTrak (live)"' data/data_source.json || { echo "Not live data, skipping"; exit 0; }
+          tar -czf tle-snapshot.tar.gz -C data raw
+          gh release view data-snapshot >/dev/null 2>&1 || gh release create data-snapshot \
+            --title "Data snapshot" --latest=false \
+            --notes "Daily copy of the CelesTrak orbit data used by the dashboard. Updated automatically."
+          gh release upload data-snapshot tle-snapshot.tar.gz --clobber
+
+      - name: Decide whether to update the results
+        id: weekly
+        run: |
+          if [ "${{ github.event_name }}" != "schedule" ] || [ "$(date -u +%u)" = "1" ]; then
+            echo "update=true" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Write results
+        if: steps.weekly.outputs.update == 'true'
         run: python -m debris.report
 
       - name: Commit results
+        if: steps.weekly.outputs.update == 'true'
         env:
           GIT_AUTHOR_NAME: Kirti
           GIT_AUTHOR_EMAIL: ""

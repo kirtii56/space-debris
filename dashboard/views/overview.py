@@ -1,11 +1,13 @@
 """Overview: every tracked object on a 3D Earth, plus catalogue statistics."""
 
+import json
+
 import plotly.express as px
 import plotly.graph_objects as go
 import streamlit as st
 
 from dashboard import common as c
-from debris.config import EVENT_NAMES
+from debris.config import EVENT_NAMES, SOURCE_FILE
 
 
 @st.fragment(run_every="60s")
@@ -46,7 +48,11 @@ def render() -> None:
     counts = objs["object_type"].value_counts()
 
     st.title("Space debris tracker")
-    st.caption(f"{len(objs):,} objects from CelesTrak · newest orbit data "
+    try:
+        source = json.loads(SOURCE_FILE.read_text())["source"]
+    except Exception:
+        source = "CelesTrak"
+    st.caption(f"{len(objs):,} objects · source: {source} · newest orbit data "
                f"{objs['epoch'].max():%d %b %Y %H:%M} UTC")
 
     m1, m2, m3, m4 = st.columns(4)

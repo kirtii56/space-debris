@@ -28,6 +28,14 @@ EVENT_NAMES = {
     "cosmos-1408-debris": "Cosmos 1408 (2021 ASAT test)",
 }
 
+# CelesTrak blocks some cloud hosts. When a live download fails, the app falls back to the
+# daily snapshot that the GitHub Actions workflow publishes as a release file.
+SNAPSHOT_URL = os.getenv(
+    "SNAPSHOT_URL",
+    "https://github.com/kirtii56/space-debris/releases/download/data-snapshot/tle-snapshot.tar.gz",
+)
+SOURCE_FILE = DATA_DIR / "data_source.json"
+
 # CelesTrak asks users not to re-download the same group more than once every 2 hours.
 CACHE_HOURS = float(os.getenv("CACHE_HOURS", "2"))
 

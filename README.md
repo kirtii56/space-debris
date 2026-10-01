@@ -129,7 +129,9 @@ uvicorn api.main:app --reload      # API (separate terminal)
 
 ### Refresh the results
 
-The **refresh real data** GitHub Actions workflow downloads live CelesTrak data every Monday, runs the full analysis and commits the charts and tables in `results/` plus the Results section above. It can also be started any time from the Actions tab (**Run workflow**). To make the same snapshot locally:
+The **refresh real data** GitHub Actions workflow downloads live CelesTrak data every day and publishes it as `tle-snapshot.tar.gz` on the [data-snapshot release](../../releases/tag/data-snapshot). Every Monday it also runs the full analysis and commits the charts and tables in `results/` plus the Results section above.
+
+CelesTrak blocks some cloud hosts. When the dashboard or pipeline can't reach it, it loads that daily snapshot instead, and the dashboard shows which source it used. It can also be started any time from the Actions tab (**Run workflow**). To make the same snapshot locally:
 
 ```bash
 python -m debris.cli all

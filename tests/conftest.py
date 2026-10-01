@@ -19,8 +19,7 @@ def now():
     return datetime.now(timezone.utc).replace(tzinfo=None, microsecond=0)
 
 
-@pytest.fixture(scope="session")
-def loaded_db(now):
+def load_synthetic(now):
     """Run the real ingest pipeline, with the download replaced by synthetic TLE text."""
     from debris import celestrak, pipeline
 
@@ -40,7 +39,11 @@ def loaded_db(now):
     original = celestrak.fetch_group
     celestrak.fetch_group = lambda group, force=False: "\n".join(by_group.get(group, []))
     try:
-        df = pipeline.run()
+        return pipeline.run()
     finally:
         celestrak.fetch_group = original
-    return df
+
+
+@pytest.fixture(scope="session")
+def loaded_db(now):
+    return load_synthetic(now)

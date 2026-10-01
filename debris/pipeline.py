@@ -1,12 +1,13 @@
 """Ingest pipeline: download TLEs -> parse -> clean with pandas -> load into SQL."""
 
+import json
 import logging
 from datetime import datetime, timezone
 
 import pandas as pd
 
 from . import celestrak, db, tle_parser
-from .config import CELESTRAK_GROUPS
+from .config import CELESTRAK_GROUPS, SOURCE_FILE
 
 logger = logging.getLogger(__name__)
 
@@ -39,19 +40,50 @@ def clean(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
+def download(groups: list[str], force: bool = False) -> tuple[dict[str, str], str]:
+    """TLE text per group, plus where it came from.
+
+    Tries CelesTrak first. Groups that fail (for example because CelesTrak blocks the host)
+    are filled from the daily snapshot that GitHub Actions publishes.
+    """
+    texts, errors = {}, {}
+    blocked = None
+    for group in groups:
+        if blocked is not None:          # CelesTrak unreachable: don't wait on every group
+            errors[group] = blocked
+            continue
+        try:
+            texts[group] = celestrak.fetch_group(group, force=force)
+        except Exception as exc:  # one failing group should not stop the rest
+            logger.warning("Could not download %s from CelesTrak: %s", group, exc)
+            errors[group] = exc
+            if celestrak.is_unreachable(exc):
+                blocked = exc
+    if not errors:
+        return texts, "CelesTrak (live)"
+
+    try:
+        snapshot = celestrak.fetch_snapshot(list(errors))
+    except Exception as exc:
+        logger.error("Snapshot download failed too: %s", exc)
+        if not texts:
+            first = next(iter(errors.values()))
+            raise RuntimeError(f"No data downloaded. CelesTrak: {first}. Snapshot: {exc}") from exc
+        return texts, "CelesTrak (live, some groups missing)"
+    source = "CelesTrak (live) + daily snapshot" if texts else "Daily snapshot of CelesTrak data"
+    texts.update(snapshot)
+    return texts, source
+
+
 def run(groups: list[str] | None = None, force_download: bool = False) -> pd.DataFrame:
     groups = groups or CELESTRAK_GROUPS
+    texts, source = download(groups, force_download)
     frames = []
-    for group in groups:
-        try:
-            text = celestrak.fetch_group(group, force=force_download)
-        except Exception as exc:  # one failing group should not stop the rest
-            logger.error("Could not load %s: %s", group, exc)
-            continue
-        frame = parse_group(text, group)
-        logger.info("%s: %d objects parsed", group, len(frame))
-        frames.append(frame)
-
+    for group in groups:              # keep the priority order of the groups
+        if group in texts:
+            frame = parse_group(texts[group], group)
+            logger.info("%s: %d objects parsed", group, len(frame))
+            frames.append(frame)
     if not frames:
         raise RuntimeError("No data downloaded. Check your internet connection and try again.")
 
@@ -61,5 +93,10 @@ def run(groups: list[str] | None = None, force_download: bool = False) -> pd.Dat
     db.execute("DELETE FROM conjunctions")
     db.execute("DELETE FROM debris_clusters")
     count = db.replace_rows(df, "objects", "DELETE FROM objects")
-    logger.info("Loaded %d objects into the database", count)
+    logger.info("Loaded %d objects into the database (source: %s)", count, source)
+    SOURCE_FILE.parent.mkdir(parents=True, exist_ok=True)
+    SOURCE_FILE.write_text(json.dumps({
+        "source": source,
+        "loaded_utc": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M"),
+    }))
     return df
