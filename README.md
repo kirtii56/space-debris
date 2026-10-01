@@ -31,7 +31,58 @@ flowchart LR
 ## Results
 
 <!-- RESULTS:START -->
-Results from live CelesTrak data appear here after the first automatic run.
+Latest run: **2026-10-01 06:16 UTC**, using live CelesTrak data. Refreshed automatically every week by GitHub Actions.
+
+| Measure | Value |
+|---|---|
+| Objects tracked | 18,646 |
+| Debris fragments | 2,674 |
+| Payloads | 15,967 |
+| Rocket bodies | 5 |
+| Share in low Earth orbit | 96% |
+| ISS close approaches under 10 km (next 24 h) | 1 |
+| Closest ISS approach | 9.16 km |
+
+![Objects per altitude band](results/altitude_density.png)
+
+**Breakup events in the catalogue**
+
+| Breakup event | Fragments still tracked | Altitude range (km) | Avg inclination (°) |
+|---|---|---|---|
+| Fengyun-1C (2007 ASAT test) | 1979 | 305 – 3123 | 98.9 |
+| Cosmos 2251 (2009 collision) | 582 | 278 – 1606 | 74.0 |
+| Iridium 33 (2009 collision) | 109 | 476 – 1321 | 86.3 |
+| Cosmos 1408 (2021 ASAT test) | 3 | 267 – 430 | 82.6 |
+
+**DBSCAN breakup clustering** (the model is never told which event a fragment came from)
+
+| Metric | Value |
+|---|---|
+| Fragments clustered | 2,673 |
+| Clusters found / true events | 3 / 4 |
+| Adjusted Rand index (1 = perfect) | 0.96 |
+| Homogeneity | 0.98 |
+| Completeness | 0.89 |
+| Left as noise | 2% |
+
+![DBSCAN clusters](results/debris_clusters.png)
+
+**Which cluster matched which event**
+
+| True event | cluster 0 | cluster 1 | cluster 2 | noise |
+|---|---|---|---|---|
+| Cosmos 1408 (2021 ASAT test) | 0 | 0 | 0 | 3 |
+| Cosmos 2251 (2009 collision) | 0 | 574 | 0 | 8 |
+| Fengyun-1C (2007 ASAT test) | 1949 | 0 | 0 | 30 |
+| Iridium 33 (2009 collision) | 0 | 0 | 104 | 5 |
+
+**Closest approaches to the ISS**
+
+| Closest approach | Object | Type | Miss (km) | Rel. speed (km/s) | Risk |
+|---|---|---|---|---|---|
+| 01 Oct 09:07 UTC | FLOCK 4BE-13 | PAYLOAD | 9.16 | 13.8 | LOW |
+
+Full list: [results/iss_close_approaches.csv](results/iss_close_approaches.csv)
 <!-- RESULTS:END -->
 
 ## Tech stack
