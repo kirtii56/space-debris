@@ -38,16 +38,17 @@ def ensure_data() -> None:
 
 ensure_data()
 
-page = st.navigation([
-    st.Page(overview.render, title="Overview", icon=":material/public:", url_path="overview",
-            default=True),
-    st.Page(explorer.render, title="Satellite explorer", icon=":material/search:",
-            url_path="explorer"),
-    st.Page(motion.render, title="Orbits in motion", icon=":material/play_circle:",
-            url_path="motion"),
-    st.Page(approaches.render, title="Close approaches", icon=":material/warning:",
-            url_path="close-approaches"),
-    st.Page(clusters.render, title="Debris clusters", icon=":material/scatter_plot:",
-            url_path="clusters"),
-], position="top")
+common.PAGES.update({
+    "overview": st.Page(overview.render, title="Overview", icon=":material/public:",
+                        url_path="overview", default=True),
+    "explorer": st.Page(explorer.render, title="Satellite explorer", icon=":material/search:",
+                        url_path="explorer"),
+    "motion": st.Page(motion.render, title="Orbits in motion", icon=":material/play_circle:",
+                      url_path="motion"),
+    "approaches": st.Page(approaches.render, title="Close approaches",
+                          icon=":material/warning:", url_path="close-approaches"),
+    "clusters": st.Page(clusters.render, title="Debris clusters",
+                        icon=":material/scatter_plot:", url_path="clusters"),
+})
+page = st.navigation(list(common.PAGES.values()), position="top")
 page.run()

@@ -24,7 +24,7 @@ def relative_motion(primary: pd.Series, secondary: pd.Series, tca, rel_speed: fl
     """
     half = float(np.clip(150 / max(rel_speed, 1e-3), 20, 900))   # show roughly ±150 km of path
     start = tca - timedelta(seconds=half)
-    t = np.linspace(0, 2 * half, 241)
+    t = np.linspace(0, 2 * half, 481)
     jd, fr = time_grid(start, t)
     rp, vp, okp = propagate_one(primary["tle_line1"], primary["tle_line2"], jd, fr)
     rs, _, oks = propagate_one(secondary["tle_line1"], secondary["tle_line2"], jd, fr)
@@ -55,7 +55,7 @@ def replay_figure(t, ric, primary_name, secondary_name, color) -> go.Figure:
         go.Scatter3d(x=[ric[0, 1]], y=[ric[0, 2]], z=[ric[0, 0]], mode="markers",
                      name=secondary_name, marker=dict(size=7, color=color)),
     ])
-    step = max(1, len(t) // 60)
+    step = max(1, len(t) // 120)
     frames = []
     for k in list(range(0, len(t), step)) + [len(t) - 1]:
         frames.append(go.Frame(name=str(k), traces=[3, 4], data=[
@@ -77,10 +77,10 @@ def replay_figure(t, ric, primary_name, secondary_name, color) -> go.Figure:
         scene=dict(xaxis=axis("In-track (km)"), yaxis=axis("Cross-track (km)"),
                    zaxis=axis("Radial (km)"), aspectmode="cube",
                    camera=dict(eye=dict(x=1.5, y=1.2, z=0.8))),
-        updatemenus=[dict(type="buttons", direction="left", x=0, y=1.02, yanchor="bottom", active=-1,
+        updatemenus=[dict(type="buttons", direction="left", x=0, y=1.02, yanchor="bottom", active=-1, showactive=False,
                           bgcolor=c.PANEL, bordercolor=c.GRID, font=dict(color=c.TEXT),
                           buttons=[dict(label="▶  Replay", method="animate", args=[None, dict(
-                              frame=dict(duration=70, redraw=True), transition=dict(duration=0),
+                              frame=dict(duration=45, redraw=True), transition=dict(duration=0),
                               mode="immediate", fromcurrent=False)])])],
     )
     return fig
@@ -120,9 +120,9 @@ def render() -> None:
                              on_select="rerun", selection_mode="points",
                              config=c.PLOTLY_CONFIG)
 
-    points = picked.selection.points if picked and picked.selection else []
-    if points:
-        chosen = int(points[0]["customdata"][0])
+    row = c.clicked(picked, timeline)
+    if row is not None:
+        chosen = int(row[0])
         if st.session_state.get("ap_last_click") != chosen:
             st.session_state["ap_last_click"] = chosen
             st.session_state["ap_event"] = chosen
@@ -155,6 +155,9 @@ def render() -> None:
         b.metric("Risk level", ev["risk"].title())
         st.caption(f"{ev['secondary_name']} ({ev['secondary_type'].lower()}, NORAD "
                    f"{ev['secondary_norad']}) at {ev['tca']:%d %b %Y %H:%M:%S} UTC")
+        if st.button(f"Open {ev['secondary_name']} in Satellite explorer",
+                     icon=":material/search:", key="ap_open"):
+            c.open_in_explorer(ev["secondary_norad"])
         dist = np.linalg.norm(ric, axis=1)
         chart = go.Figure(go.Scatter(x=t, y=dist, mode="lines", line=dict(color=color, width=3),
                                      hovertemplate="%{x:+.0f} s · %{y:.2f} km<extra></extra>"))

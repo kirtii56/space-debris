@@ -10,19 +10,21 @@ from dashboard import common as c
 from debris.config import EVENT_NAMES, SOURCE_FILE
 
 
-@st.fragment(run_every="60s")
+@st.fragment
 def live_globe() -> None:
-    """Re-drawn every minute so positions stay current. The camera angle is kept."""
-    col1, col2, col3 = st.columns([2.2, 2.4, 1.6])
+    """The 3D globe. A fragment, so clicking a dot only re-runs this part of the page."""
+    col1, col2, col3, col4 = st.columns([2.1, 2.3, 1.5, 1.0], vertical_alignment="bottom")
     types = col1.pills("Objects", list(c.TYPE_LABELS), format_func=c.TYPE_LABELS.get,
                        selection_mode="multi", default=list(c.TYPE_LABELS), key="ov_types")
     orbits = col2.pills("Orbit regime", c.ORBIT_CLASSES, selection_mode="multi",
                         default=["LEO", "MEO", "GEO", "HEO"], key="ov_orbits")
     view = col3.segmented_control("Zoom", ["Low orbit", "Out to GEO"], default="Low orbit",
                                   key="ov_view") or "Low orbit"
+    if col4.button("Update positions", icon=":material/refresh:", key="ov_refresh"):
+        st.session_state["ov_time"] = c.utcnow().strftime("%Y-%m-%dT%H:%M")
+    minute = st.session_state.setdefault("ov_time", c.utcnow().strftime("%Y-%m-%dT%H:%M"))
 
-    now = c.utcnow()
-    pos = c.positions_at(now.strftime("%Y-%m-%dT%H:%M"))
+    pos = c.positions_at(minute)
     shown = pos[pos["object_type"].isin(types or []) & pos["orbit_class"].isin(orbits or [])]
 
     fig = go.Figure(c.earth_traces())
@@ -32,14 +34,29 @@ def live_globe() -> None:
             x=sub["x"], y=sub["y"], z=sub["z"], mode="markers", text=sub["name"],
             name=f"{c.TYPE_LABELS[kind]} ({len(sub):,})",
             marker=dict(size=1.8 if len(sub) > 3000 else 2.6, color=c.TYPE_COLORS[kind]),
-            customdata=sub[["norad_id", "alt", "orbit_class"]],
-            hovertemplate="<b>%{text}</b><br>NORAD %{customdata[0]}<br>"
-                          "Altitude %{customdata[1]:,.0f} km<br>%{customdata[2]}<extra></extra>",
+            customdata=sub[["norad_id", "alt", "orbit_class", "speed", "inclination_deg",
+                            "period_min"]].to_numpy(),
+            hovertemplate=(f"<b>%{{text}}</b><br>{kind.title()} · %{{customdata[2]}} · "
+                           "NORAD %{customdata[0]}<br>Altitude %{customdata[1]:,.0f} km · "
+                           "%{customdata[3]:.2f} km/s<br>Inclination %{customdata[4]:.1f}° · "
+                           "one orbit %{customdata[5]:.0f} min<br><i>Click for more</i>"
+                           "<extra></extra>"),
         ))
-    c.globe_layout(fig, 8200 if view == "Low orbit" else 44000, height=660)
-    st.plotly_chart(fig, width="stretch", config=c.PLOTLY_CONFIG, key="ov_globe")
-    st.caption(f"Positions at {now:%H:%M} UTC, updated every minute. Drag to rotate, scroll to "
-               f"zoom, click a legend entry to hide it. Showing {len(shown):,} objects.")
+    c.globe_layout(fig, 8200 if view == "Low orbit" else 44000, height=640)
+
+    globe_col, card_col = st.columns([3, 1.15], gap="medium")
+    with globe_col:
+        event = st.plotly_chart(fig, width="stretch", config=c.PLOTLY_CONFIG, key="ov_globe",
+                                on_select="rerun", selection_mode="points")
+    with card_col:
+        picked = c.clicked(event, fig)
+        if picked is not None:
+            c.object_card(int(picked[0]), key="ov_card")
+        else:
+            st.info("Click any dot on the globe to see what it is, how high and fast it's "
+                    "going, and where it came from.", icon=":material/touch_app:")
+    st.caption(f"Positions at {minute[-5:]} UTC. Drag to rotate, scroll to zoom, hover for "
+               f"details, click a legend entry to hide it. Showing {len(shown):,} objects.")
 
 
 def render() -> None:

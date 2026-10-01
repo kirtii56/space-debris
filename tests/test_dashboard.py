@@ -55,3 +55,19 @@ def test_app_entry_point(analysed):
     at = AppTest.from_file(f"{ROOT}/dashboard/app.py", default_timeout=120).run()
     assert not at.exception
     assert at.title[0].value == "Space debris tracker"
+
+
+def test_clicked_reads_point_without_customdata():
+    """Streamlit's click payload may lack customdata; the helper must use the figure instead."""
+    import plotly.graph_objects as go
+
+    from dashboard import common as c
+
+    class Event:
+        class selection:  # noqa: N801
+            points = [{"curve_number": 1, "point_index": 2}]   # no "customdata" key
+
+    fig = go.Figure([go.Scatter(x=[0], y=[0]),
+                     go.Scatter(x=[1, 2, 3], y=[1, 2, 3], customdata=[[10], [11], [12]])])
+    assert c.clicked(Event, fig)[0] == 12
+    assert c.clicked(None, fig) is None
