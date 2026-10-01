@@ -1,5 +1,5 @@
 {
-  "data_downloaded_utc": "2026-10-01 06:16",
+  "data_downloaded_utc": "2026-10-01 06:18",
   "objects_tracked": 18646,
   "by_type": {
     "PAYLOAD": 15967,
@@ -7,7 +7,8 @@
     "ROCKET BODY": 5
   },
   "leo_share": 0.957,
-  "close_approaches_under_10km": 1,
+  "screening_threshold_km": 25.0,
+  "close_approaches": 24,
   "closest_miss_km": 9.16,
   "clustering": {
     "eps": 0.4569,
@@ -20,6 +21,6 @@
     "completeness": 0.8923,
     "adjusted_rand_index": 0.9629,
     "silhouette": 0.3132,
-    "run_at": "2026-10-01T06:15:59"
+    "run_at": "2026-10-01T06:18:38"
   }
 }

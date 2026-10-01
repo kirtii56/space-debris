@@ -1,6 +1,6 @@
 # Results
 
-Latest run: **2026-10-01 06:16 UTC**, using live CelesTrak data. Refreshed automatically every week by GitHub Actions.
+Latest run: **2026-10-01 06:18 UTC**, using live CelesTrak data. Refreshed automatically every week by GitHub Actions.
 
 | Measure | Value |
 |---|---|
@@ -9,7 +9,7 @@ Latest run: **2026-10-01 06:16 UTC**, using live CelesTrak data. Refreshed autom
 | Payloads | 15,967 |
 | Rocket bodies | 5 |
 | Share in low Earth orbit | 96% |
-| ISS close approaches under 10 km (next 24 h) | 1 |
+| ISS close approaches under 25 km (next 24 h) | 24 |
 | Closest ISS approach | 9.16 km |
 
 ![Objects per altitude band](results/altitude_density.png)
@@ -50,5 +50,9 @@ Latest run: **2026-10-01 06:16 UTC**, using live CelesTrak data. Refreshed autom
 | Closest approach | Object | Type | Miss (km) | Rel. speed (km/s) | Risk |
 |---|---|---|---|---|---|
 | 01 Oct 09:07 UTC | FLOCK 4BE-13 | PAYLOAD | 9.16 | 13.8 | LOW |
+| 01 Oct 16:44 UTC | STARLINK-1183 | PAYLOAD | 10.07 | 11.25 | LOW |
+| 01 Oct 16:52 UTC | FLOCK 4BE-9 | PAYLOAD | 11.94 | 13.72 | LOW |
+| 01 Oct 21:31 UTC | CONNECTA IOT-4 | PAYLOAD | 11.98 | 13.66 | LOW |
+| 01 Oct 20:40 UTC | STARLINK-30806 | PAYLOAD | 13.54 | 7.65 | LOW |
 
 Full list: [results/iss_close_approaches.csv](results/iss_close_approaches.csv)
