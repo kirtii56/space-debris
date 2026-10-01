@@ -17,7 +17,7 @@ import pandas as pd
 
 from . import db
 from .collision import risk_level
-from .config import EVENT_NAMES, ROOT_DIR
+from .config import EVENT_NAMES, MISS_THRESHOLD_KM, ROOT_DIR
 from .ml.clustering import load_metrics
 
 logger = logging.getLogger(__name__)
@@ -102,7 +102,8 @@ def build() -> dict:
         "objects_tracked": int(len(objects)),
         "by_type": {k: int(v) for k, v in by_type.items()},
         "leo_share": round(float((objects["orbit_class"] == "LEO").mean()), 3),
-        "close_approaches_under_10km": int(len(conj)),
+        "screening_threshold_km": MISS_THRESHOLD_KM,
+        "close_approaches": int(len(conj)),
         "closest_miss_km": round(float(conj["miss_distance_km"].min()), 2) if len(conj) else None,
         "clustering": metrics,
     }
@@ -120,7 +121,7 @@ def build() -> dict:
         f"| Payloads | {by_type.get('PAYLOAD', 0):,} |",
         f"| Rocket bodies | {by_type.get('ROCKET BODY', 0):,} |",
         f"| Share in low Earth orbit | {summary['leo_share']:.0%} |",
-        f"| ISS close approaches under 10 km (next 24 h) | {len(conj)} |",
+        f"| ISS close approaches under {MISS_THRESHOLD_KM:.0f} km (next 24 h) | {len(conj)} |",
     ]
     if len(conj):
         lines.append(f"| Closest ISS approach | {summary['closest_miss_km']} km |")

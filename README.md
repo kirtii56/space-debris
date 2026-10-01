@@ -171,7 +171,7 @@ On first start with an empty database the dashboard downloads live data by itsel
 
 **Data.** TLEs are downloaded from CelesTrak's active-satellite, space-station and debris groups for four well-known breakups: the 2007 Fengyun-1C anti-satellite test, the 2009 Iridium 33 / Cosmos 2251 collision, and the 2021 Cosmos 1408 anti-satellite test. Every TLE is checksum-validated. Duplicates are removed and re-entering objects (perigee under 100 km) are dropped. Downloads are cached for two hours, following CelesTrak's usage guidance.
 
-**Conjunction screening.** Candidates are first filtered by TLE age (30 days or less) and by altitude overlap with the primary. All remaining objects are propagated together on a 30-second grid with SGP4. Local minima of the distance are refined on a 1-second grid, then corrected with a straight-line relative-motion step to find the time of closest approach. Screening 6,000 objects over 24 hours takes a few seconds.
+**Conjunction screening.** Candidates are first filtered by TLE age (30 days or less) and by altitude overlap with the primary. All remaining objects are propagated together on a 30-second grid with SGP4. Local minima of the distance are refined on a 1-second grid, then corrected with a straight-line relative-motion step to find the time of closest approach. Passes closer than 25 km are kept, the same distance as the along-track size of the ISS's own screening box. Screening 6,000 objects over 24 hours takes a few seconds.
 
 **Collision probability.** Public TLEs do not include uncertainty (covariance) data, so the probability is an estimate. It assumes a 1 km isotropic position error and a 20 m combined object radius. It is useful for ranking events against each other, not as an operational value.
 
@@ -179,6 +179,8 @@ On first start with an empty database the dashboard downloads live data by itsel
 
 ## Limitations
 
+- The catalogue is CelesTrak's active-satellite list plus the debris clouds of four breakups, about 18,000 objects. It is not the full public catalogue, so most old rocket bodies and other debris are not included.
+- Cosmos 1408 debris has almost all re-entered, so its few remaining fragments fall below DBSCAN's `min_samples` and are correctly left as noise rather than forming a fourth cluster.
 - SGP4 accuracy is a few kilometres at best and degrades as TLEs age. Results are for analysis, not operations.
 - Collision probability uses an assumed uncertainty (see above).
 - Inclination does most of the work in separating these four events. Events with similar inclinations would be harder to separate.

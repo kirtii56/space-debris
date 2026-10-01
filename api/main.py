@@ -11,6 +11,7 @@ from fastapi import FastAPI, HTTPException, Query
 
 from debris import db
 from debris.collision import risk_level
+from debris.config import MISS_THRESHOLD_KM
 from debris.ml.clustering import load_metrics
 from debris.propagator import propagate_one, teme_to_geodetic, time_grid
 
@@ -106,7 +107,7 @@ def get_position(norad_id: int, at: datetime | None = None):
 
 
 @app.get("/conjunctions")
-def list_conjunctions(primary: int | None = None, max_miss_km: float = Query(10.0, gt=0)):
+def list_conjunctions(primary: int | None = None, max_miss_km: float = Query(MISS_THRESHOLD_KM, gt=0)):
     sql = "SELECT * FROM v_conjunctions_detail WHERE miss_distance_km <= :m"
     params = {"m": max_miss_km}
     if primary:

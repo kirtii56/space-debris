@@ -10,6 +10,7 @@ import streamlit as st
 
 from dashboard import common as c
 from debris.collision import risk_level
+from debris.config import MISS_THRESHOLD_KM
 from debris.propagator import propagate_one, time_grid
 
 RISK_COLORS = {"HIGH": "#E0707A", "MEDIUM": "#F2B544", "LOW": "#7CC47F"}
@@ -99,7 +100,8 @@ def render() -> None:
     conj["risk"] = conj["collision_probability"].map(risk_level)
     conj["event"] = conj.index
     primary_name = conj["primary_name"].iloc[0]
-    st.caption(f"Objects passing within 10 km of the {primary_name} in the next 24 hours. "
+    st.caption(f"Objects passing within {MISS_THRESHOLD_KM:.0f} km of the {primary_name} in the next "
+               "24 hours. "
                "Click a dot to replay that pass.")
 
     m1, m2, m3, m4 = st.columns(4)
