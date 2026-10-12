@@ -1,26 +1,26 @@
 {
-  "data_downloaded_utc": "2026-10-05 10:47",
-  "objects_tracked": 18641,
+  "data_downloaded_utc": "2026-10-12 11:15",
+  "objects_tracked": 18618,
   "by_type": {
-    "PAYLOAD": 15957,
-    "DEBRIS": 2679,
+    "PAYLOAD": 15938,
+    "DEBRIS": 2675,
     "ROCKET BODY": 5
   },
   "leo_share": 0.957,
   "screening_threshold_km": 25.0,
-  "close_approaches": 15,
-  "closest_miss_km": 3.43,
+  "close_approaches": 14,
+  "closest_miss_km": 6.9,
   "clustering": {
-    "eps": 0.4542,
+    "eps": 0.4717,
     "min_samples": 10,
-    "fragments": 2678,
+    "fragments": 2674,
     "clusters_found": 3,
     "true_events": 4,
-    "noise_fraction": 0.0172,
-    "homogeneity": 0.9752,
-    "completeness": 0.8925,
-    "adjusted_rand_index": 0.963,
-    "silhouette": 0.3123,
-    "run_at": "2026-10-05T10:47:24"
+    "noise_fraction": 0.0176,
+    "homogeneity": 0.9742,
+    "completeness": 0.8905,
+    "adjusted_rand_index": 0.9627,
+    "silhouette": 0.3106,
+    "run_at": "2026-10-12T11:15:17"
   }
 }

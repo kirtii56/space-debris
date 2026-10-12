@@ -1,16 +1,16 @@
 # Results
 
-Latest run: **2026-10-05 10:47 UTC**, using live CelesTrak data. Refreshed automatically every week by GitHub Actions.
+Latest run: **2026-10-12 11:15 UTC**, using live CelesTrak data. Refreshed automatically every week by GitHub Actions.
 
 | Measure | Value |
 |---|---|
-| Objects tracked | 18,641 |
-| Debris fragments | 2,679 |
-| Payloads | 15,957 |
+| Objects tracked | 18,618 |
+| Debris fragments | 2,675 |
+| Payloads | 15,938 |
 | Rocket bodies | 5 |
 | Share in low Earth orbit | 96% |
-| ISS close approaches under 25 km (next 24 h) | 15 |
-| Closest ISS approach | 3.43 km |
+| ISS close approaches under 25 km (next 24 h) | 14 |
+| Closest ISS approach | 6.9 km |
 
 ![Objects per altitude band](results/altitude_density.png)
 
@@ -18,19 +18,19 @@ Latest run: **2026-10-05 10:47 UTC**, using live CelesTrak data. Refreshed autom
 
 | Breakup event | Fragments still tracked | Altitude range (km) | Avg inclination (°) |
 |---|---|---|---|
-| Fengyun-1C (2007 ASAT test) | 1981 | 304 – 3124 | 98.9 |
-| Cosmos 2251 (2009 collision) | 585 | 266 – 1606 | 74.0 |
-| Iridium 33 (2009 collision) | 109 | 476 – 1320 | 86.3 |
-| Cosmos 1408 (2021 ASAT test) | 3 | 263 – 431 | 82.6 |
+| Fengyun-1C (2007 ASAT test) | 1976 | 301 – 3132 | 98.9 |
+| Cosmos 2251 (2009 collision) | 587 | 266 – 1606 | 74.0 |
+| Iridium 33 (2009 collision) | 108 | 472 – 1320 | 86.3 |
+| Cosmos 1408 (2021 ASAT test) | 3 | 254 – 431 | 82.6 |
 
 **DBSCAN breakup clustering** (the model is never told which event a fragment came from)
 
 | Metric | Value |
 |---|---|
-| Fragments clustered | 2,678 |
+| Fragments clustered | 2,674 |
 | Clusters found / true events | 3 / 4 |
 | Adjusted Rand index (1 = perfect) | 0.96 |
-| Homogeneity | 0.98 |
+| Homogeneity | 0.97 |
 | Completeness | 0.89 |
 | Left as noise | 2% |
 
@@ -41,18 +41,18 @@ Latest run: **2026-10-05 10:47 UTC**, using live CelesTrak data. Refreshed autom
 | True event | cluster 0 | cluster 1 | cluster 2 | noise |
 |---|---|---|---|---|
 | Cosmos 1408 (2021 ASAT test) | 0 | 0 | 0 | 3 |
-| Cosmos 2251 (2009 collision) | 0 | 577 | 0 | 8 |
-| Fengyun-1C (2007 ASAT test) | 1951 | 0 | 0 | 30 |
-| Iridium 33 (2009 collision) | 0 | 0 | 104 | 5 |
+| Cosmos 2251 (2009 collision) | 0 | 578 | 0 | 9 |
+| Fengyun-1C (2007 ASAT test) | 1946 | 0 | 0 | 30 |
+| Iridium 33 (2009 collision) | 0 | 0 | 103 | 5 |
 
 **Closest approaches to the ISS**
 
 | Closest approach | Object | Type | Miss (km) | Rel. speed (km/s) | Risk |
 |---|---|---|---|---|---|
-| 05 Oct 11:22 UTC | POLYTECH UNIVERSE-4 | PAYLOAD | 3.43 | 7.4 | LOW |
-| 06 Oct 05:12 UTC | STARLINK-30806 | PAYLOAD | 4.03 | 7.91 | LOW |
-| 06 Oct 10:37 UTC | STARLINK-30806 | PAYLOAD | 9.79 | 7.93 | LOW |
-| 06 Oct 03:39 UTC | STARLINK-30806 | PAYLOAD | 10.69 | 7.91 | LOW |
-| 05 Oct 12:09 UTC | POLYTECH UNIVERSE-4 | PAYLOAD | 13.47 | 7.41 | LOW |
+| 13 Oct 09:12 UTC | STARLINK-1271 | PAYLOAD | 6.9 | 0.79 | LOW |
+| 12 Oct 13:31 UTC | 2025-155K | PAYLOAD | 8.42 | 14.76 | LOW |
+| 12 Oct 12:44 UTC | 2025-155K | PAYLOAD | 10.34 | 14.76 | LOW |
+| 13 Oct 02:27 UTC | SHIYAN-32 02 | PAYLOAD | 12.22 | 9.16 | LOW |
+| 12 Oct 14:46 UTC | FLOCK 4BE-18 | PAYLOAD | 12.36 | 9.62 | LOW |
 
 Full list: [results/iss_close_approaches.csv](results/iss_close_approaches.csv)
