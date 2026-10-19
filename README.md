@@ -31,17 +31,17 @@ flowchart LR
 ## Results
 
 <!-- RESULTS:START -->
-Latest run: **2026-10-12 11:15 UTC**, using live CelesTrak data. Refreshed automatically every week by GitHub Actions.
+Latest run: **2026-10-19 09:14 UTC**, using live CelesTrak data. Refreshed automatically every week by GitHub Actions.
 
 | Measure | Value |
 |---|---|
-| Objects tracked | 18,618 |
+| Objects tracked | 18,606 |
 | Debris fragments | 2,675 |
-| Payloads | 15,938 |
+| Payloads | 15,926 |
 | Rocket bodies | 5 |
 | Share in low Earth orbit | 96% |
-| ISS close approaches under 25 km (next 24 h) | 14 |
-| Closest ISS approach | 6.9 km |
+| ISS close approaches under 25 km (next 24 h) | 30 |
+| Closest ISS approach | 0.0 km |
 
 ![Objects per altitude band](results/altitude_density.png)
 
@@ -49,10 +49,10 @@ Latest run: **2026-10-12 11:15 UTC**, using live CelesTrak data. Refreshed autom
 
 | Breakup event | Fragments still tracked | Altitude range (km) | Avg inclination (°) |
 |---|---|---|---|
-| Fengyun-1C (2007 ASAT test) | 1976 | 301 – 3132 | 98.9 |
-| Cosmos 2251 (2009 collision) | 587 | 266 – 1606 | 74.0 |
-| Iridium 33 (2009 collision) | 108 | 472 – 1320 | 86.3 |
-| Cosmos 1408 (2021 ASAT test) | 3 | 254 – 431 | 82.6 |
+| Fengyun-1C (2007 ASAT test) | 1978 | 299 – 3136 | 98.9 |
+| Cosmos 2251 (2009 collision) | 585 | 325 – 1606 | 74.0 |
+| Iridium 33 (2009 collision) | 108 | 469 – 1319 | 86.3 |
+| Cosmos 1408 (2021 ASAT test) | 3 | 241 – 431 | 82.6 |
 
 **DBSCAN breakup clustering** (the model is never told which event a fragment came from)
 
@@ -72,19 +72,19 @@ Latest run: **2026-10-12 11:15 UTC**, using live CelesTrak data. Refreshed autom
 | True event | cluster 0 | cluster 1 | cluster 2 | noise |
 |---|---|---|---|---|
 | Cosmos 1408 (2021 ASAT test) | 0 | 0 | 0 | 3 |
-| Cosmos 2251 (2009 collision) | 0 | 578 | 0 | 9 |
-| Fengyun-1C (2007 ASAT test) | 1946 | 0 | 0 | 30 |
-| Iridium 33 (2009 collision) | 0 | 0 | 103 | 5 |
+| Cosmos 2251 (2009 collision) | 0 | 578 | 0 | 7 |
+| Fengyun-1C (2007 ASAT test) | 1946 | 0 | 0 | 32 |
+| Iridium 33 (2009 collision) | 0 | 0 | 99 | 9 |
 
 **Closest approaches to the ISS**
 
 | Closest approach | Object | Type | Miss (km) | Rel. speed (km/s) | Risk |
 |---|---|---|---|---|---|
-| 13 Oct 09:12 UTC | STARLINK-1271 | PAYLOAD | 6.9 | 0.79 | LOW |
-| 12 Oct 13:31 UTC | 2025-155K | PAYLOAD | 8.42 | 14.76 | LOW |
-| 12 Oct 12:44 UTC | 2025-155K | PAYLOAD | 10.34 | 14.76 | LOW |
-| 13 Oct 02:27 UTC | SHIYAN-32 02 | PAYLOAD | 12.22 | 9.16 | LOW |
-| 12 Oct 14:46 UTC | FLOCK 4BE-18 | PAYLOAD | 12.36 | 9.62 | LOW |
+| 19 Oct 13:55 UTC | PROGRESS-MS 34 | PAYLOAD | 0.0 | 0.0 | HIGH |
+| 19 Oct 10:03 UTC | PROGRESS-MS 34 | PAYLOAD | 0.01 | 0.0 | HIGH |
+| 19 Oct 12:22 UTC | PROGRESS-MS 34 | PAYLOAD | 0.01 | 0.0 | HIGH |
+| 19 Oct 11:35 UTC | PROGRESS-MS 34 | PAYLOAD | 0.01 | 0.0 | HIGH |
+| 19 Oct 15:28 UTC | PROGRESS-MS 34 | PAYLOAD | 0.02 | 0.0 | HIGH |
 
 Full list: [results/iss_close_approaches.csv](results/iss_close_approaches.csv)
 <!-- RESULTS:END -->
