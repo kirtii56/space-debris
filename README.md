@@ -2,6 +2,8 @@
 
 Tracks real satellites and debris from [CelesTrak](https://celestrak.org), finds close approaches to a chosen spacecraft (the ISS by default), and uses unsupervised machine learning to rediscover which breakup event each debris fragment came from.
 
+**Live demo:** [orbital-debris.streamlit.app](https://orbital-debris.streamlit.app/)
+
 ![tests](https://github.com/kirtii56/space-debris/actions/workflows/tests.yml/badge.svg)
 
 ## What it does
