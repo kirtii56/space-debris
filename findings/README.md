@@ -94,6 +94,38 @@ almost 1,000 fly below 400 km, where a geomagnetic storm raises drag the most.
 Propagating all 15,908 satellites for 24 hours at 1-minute steps (23 million states) takes
 about 13 seconds on a 2-core machine with vectorised SGP4.
 
+## 7. Ground stations: how many passes, and does one more station help?
+
+Script: [ground_stations.py](ground_stations.py). Sentinel-2A, 24 hours, 5° mask.
+
+- Across the five sites it makes **51 station passes** a day. Overlaps merge them into
+  31 contact windows. A 100-satellite fleet would need ~5,100 passes scheduled every day.
+- Svalbard alone covers 15 passes but only 11% of the day (longest gap 96 min).
+- Adding a sixth station barely moves the numbers, and *where* it goes matters more than
+  adding it:
+
+| Sixth station | Share of day in contact | Longest gap |
+|---|---|---|
+| none (5 stations) | 28.6% | 87 min |
+| Punta Arenas | 32.2% | 85 min |
+| Bengaluru | 31.2% | 85 min |
+| Singapore | 31.1% | 86 min |
+| Hawaii | 30.9% | 87 min |
+| Inuvik | 29.3% | 87 min (overlaps Fairbanks and Svalbard) |
+
+## 8. Ground telescopes only work part of the day
+
+From section 6: astronomical darkness lasted 608 min in New Mexico, 611 in Toronto,
+599 in Mumbai and 457 in Svalbard on 24 Oct, so a ground optical sensor can observe for
+only about 30–42% of the day.
+
+## 9. Why naive screening raises false alarms
+
+The ISS screen in [results/](../results/RESULTS.md) found 30 approaches under 25 km on 19 Oct.
+**23 of them were Progress MS-34, a cargo ship docked to the ISS**, flagged as a
+"0 km, high risk" event. Only 7 were real passes (19–25 km). A useful screen has to
+know which objects are attached to each other.
+
 ## Limits
 
 - TLEs are accurate to roughly a kilometre, so sub-kilometre numbers are rough.
