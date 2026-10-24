@@ -63,6 +63,37 @@ catalogue for approaches under **5 km** (formation flying under 0.5 km/s exclude
 Most close approaches in a mega-constellation are with its own satellites, and almost every
 satellite has several a day. Screening them one by one from the ground does not scale.
 
+## 5. Where do active satellites fly? (space weather exposure)
+
+Script: [sky_and_drag.py](sky_and_drag.py). Active satellites in low Earth orbit by mean altitude.
+
+| Altitude band | Satellites | Of which Starlink |
+|---|---|---|
+| below 400 km | 976 | 809 |
+| 400–450 km | 470 | 252 |
+| 450–500 km | 9,787 | 9,178 |
+| 500–550 km | 796 | 212 |
+| 550–600 km | 667 | 191 |
+| 600–2,000 km | 2,414 | 0 |
+
+Nearly two thirds of all active LEO satellites now sit in one 50 km band (450–500 km), and
+almost 1,000 fly below 400 km, where a geomagnetic storm raises drag the most.
+
+## 6. How crowded is the sky above one site?
+
+24 hours from 24 Oct 2026 00:00 UTC, 1-minute steps, all 15,908 active satellites.
+"Observable" = above the elevation mask, sunlit, while the site is in astronomical darkness.
+
+| Site (mask) | Above mask at once (avg / max) | Starlink share | Observable at once in darkness | Different observable satellites in one night |
+|---|---|---|---|---|
+| Toronto (10°) | 558 / 621 | 39% | 270 | 6,689 |
+| Mumbai (10°) | 604 / 670 | 22% | 403 | 3,077 |
+| Svalbard (10°) | 393 / 455 | 18% | 299 | 4,988 |
+| New Mexico dark site (20°) | 313 / 362 | 25% | 197 | 2,672 |
+
+Propagating all 15,908 satellites for 24 hours at 1-minute steps (23 million states) takes
+about 13 seconds on a 2-core machine with vectorised SGP4.
+
 ## Limits
 
 - TLEs are accurate to roughly a kilometre, so sub-kilometre numbers are rough.
