@@ -1,0 +1,61 @@
+{
+  "start_utc": "2026-10-24 14:00:00",
+  "objects": 18592,
+  "hosts": {
+    "SENTINEL-2A": {
+      "passes_under_50km": 11,
+      "different_satellites": 7,
+      "slow_passes_under_3_km_s": 2,
+      "passes_out_of_contact": 3,
+      "share_of_day_in_contact": 0.286,
+      "longest_gap_min": 87.0
+    },
+    "SENTINEL-2B": {
+      "passes_under_50km": 23,
+      "different_satellites": 10,
+      "slow_passes_under_3_km_s": 2,
+      "passes_out_of_contact": 10,
+      "share_of_day_in_contact": 0.291,
+      "longest_gap_min": 87.0
+    },
+    "LANDSAT 8": {
+      "passes_under_50km": 14,
+      "different_satellites": 9,
+      "slow_passes_under_3_km_s": 2,
+      "passes_out_of_contact": 8,
+      "share_of_day_in_contact": 0.26,
+      "longest_gap_min": 85.8
+    },
+    "LANDSAT 9": {
+      "passes_under_50km": 8,
+      "different_satellites": 6,
+      "slow_passes_under_3_km_s": 0,
+      "passes_out_of_contact": 3,
+      "share_of_day_in_contact": 0.268,
+      "longest_gap_min": 86.3
+    },
+    "WORLDVIEW-3 (WV-3)": {
+      "passes_under_50km": 176,
+      "different_satellites": 71,
+      "slow_passes_under_3_km_s": 6,
+      "passes_out_of_contact": 146,
+      "share_of_day_in_contact": 0.239,
+      "longest_gap_min": 85.5
+    },
+    "PLEIADES NEO 3": {
+      "passes_under_50km": 115,
+      "different_satellites": 43,
+      "slow_passes_under_3_km_s": 3,
+      "passes_out_of_contact": 93,
+      "share_of_day_in_contact": 0.244,
+      "longest_gap_min": 85.7
+    }
+  },
+  "starlink_sample": {
+    "satellites_sampled": 100,
+    "approaches_under_5km": 929,
+    "approaches_under_1km": 33,
+    "satellites_with_at_least_one": 91,
+    "share_with_other_starlink": 0.9
+  }
+}

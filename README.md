@@ -91,6 +91,12 @@ Latest run: **2026-10-19 09:14 UTC**, using live CelesTrak data. Refreshed autom
 Full list: [results/iss_close_approaches.csv](results/iss_close_approaches.csv)
 <!-- RESULTS:END -->
 
+## Space operations findings
+
+Four extra questions answered with the same code: imaging chances between satellites,
+ground-contact gaps, close passes that happen out of contact, and how busy Starlink is.
+See [findings/](findings/README.md).
+
 ## Tech stack
 
 | Area | Tools |
